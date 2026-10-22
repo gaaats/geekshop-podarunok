@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="Підбір подарунка для фаната Гаррі Поттера, Marvel, S.T.A.L.K.E.R. та інших всесвітів від Geekshop Ukraine">
+<title>Підбір подарунка · Geekshop Ukraine</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700&family=Philosopher:ital,wght@1,700&family=Oswald:wght@700&family=Russo+One&family=Rubik+Mono+One&display=swap">
+<style>
+/* Layout: night-sky "fandom portal" — hero with the request letter + fandom ticker, then a workbench (filters | results), sticky order bar.
+   Deliberately single dark theme: every fandom colour glows best on night ink. */
+:root{
+  color-scheme:dark;
+  --ink:#0D0A16; --surface:#16112A; --surface-2:#1F1838; --line:#2F2750; --fg:#F2EEFF; --muted:#A79DC9;
+  --gold:#F0C25A;      /* Hogwarts gold — prices */
+  --red:#EC3D52;       /* Marvel red — main action */
+  --rad:#BEDC4E;       /* Zone radiation — STALKER */
+  --cyan:#55D6EE;      /* lightsaber / anime */
+  --violet:#9B7BFF;    /* magic */
+  --display:"Unbounded", "Manrope", system-ui, sans-serif;
+  --body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --glow:conic-gradient(from 210deg, var(--gold), var(--red), var(--violet), var(--cyan), var(--rad), var(--gold));
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--ink)}
+body{margin:0;background:var(--ink);color:var(--fg);font:15px/1.55 var(--body);padding-block:0 110px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));overflow-x:hidden}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{position:relative;z-index:1;max-width:1200px;margin:0 auto}
+a{color:inherit}
+button{font:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+
+/* ---------- top bar ---------- */
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-block:18px 8px;flex-wrap:wrap}
+.logo{font:800 15px/1 var(--display);letter-spacing:.02em;display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo i{width:30px;height:30px;border-radius:9px;background:var(--glow);display:grid;place-items:center;font-style:normal;color:var(--ink);font-size:16px}
+.proto{font:600 11px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;color:var(--gold);border:1px solid color-mix(in srgb,var(--gold) 45%,transparent);border-radius:999px;padding:7px 12px}
+
+/* ---------- hero ---------- */
+.hero{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1fr);gap:36px;align-items:center;padding-block:34px 26px}
+@media (max-width:900px){.hero{grid-template-columns:minmax(0,1fr);gap:22px;padding-top:18px}}
+.eyebrow{font:600 12px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin:0 0 14px}
+h1{font:800 clamp(30px,5.2vw,58px)/1.02 var(--display);margin:0;letter-spacing:-.01em;text-wrap:balance}
+h1 .hl{background:linear-gradient(90deg,var(--gold),var(--red) 45%,var(--violet) 75%,var(--cyan));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{color:var(--muted);font-size:16px;max-width:52ch;margin:16px 0 0}
+.letter{position:relative;border-radius:22px;padding:2px;background:var(--glow)}
+.letter-in{background:linear-gradient(160deg,var(--surface-2),var(--surface));border-radius:20px;padding:20px;display:grid;gap:12px}
+.letter label{font:600 13px/1.2 var(--display);letter-spacing:.02em}
+.letter textarea{width:100%;min-height:110px;resize:vertical;font:500 16px/1.5 var(--body);color:var(--fg);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:14px;padding:14px}
+.letter textarea::placeholder{color:var(--muted)}
+.letter .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.parsed{display:flex;flex-wrap:wrap;gap:6px;min-height:26px}
+.parsed span{font-size:12px;font-weight:600;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.07);color:var(--fg)}
+.parsed .miss{background:none;color:var(--muted);padding-left:0}
+
+/* ---------- fandom ticker ---------- */
+.ticker{position:relative;overflow:hidden;border-block:1px solid var(--line);margin-block:6px 30px;padding-block:14px;
+  mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.track{display:flex;gap:42px;width:max-content;align-items:center;white-space:nowrap}
+@media (prefers-reduced-motion:no-preference){.track{animation:slide 38s linear infinite}@keyframes slide{to{transform:translateX(-50%)}}}
+.f{font-size:22px;line-height:1}
+.f.hp{font:italic 700 26px/1 "Philosopher",Georgia,serif;color:var(--gold)}
+.f.mv{font:700 24px/1 "Oswald",Impact,sans-serif;text-transform:uppercase;color:#fff;background:var(--red);padding:4px 8px 2px;letter-spacing:.02em}
+.f.st{font:400 22px/1 "Russo One",sans-serif;color:var(--rad);letter-spacing:.12em}
+.f.sw{font:800 20px/1 var(--display);color:transparent;-webkit-text-stroke:1px var(--gold);letter-spacing:.14em;text-transform:uppercase}
+.f.an{font:400 18px/1 "Rubik Mono One",sans-serif;color:var(--cyan)}
+.f.dc{font:800 20px/1 var(--display);color:#6FA8FF;letter-spacing:.05em}
+.f.rk{font:400 20px/1 "Rubik Mono One",sans-serif;color:#8BE04E}
+.f.sq{font:800 20px/1 var(--display);color:#FF5FA2;letter-spacing:.2em}
+.f.dot{color:var(--line);font-size:14px}
+
+/* ---------- workbench ---------- */
+.bench{display:grid;grid-template-columns:minmax(0,340px) minmax(0,1fr);gap:24px;align-items:start}
+@media (max-width:900px){.bench{grid-template-columns:minmax(0,1fr)}}
+.filters{background:rgba(22,17,42,.82);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:20px;padding:20px;display:grid;gap:20px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 14px)}
+@media (max-width:900px){.filters{position:static}}
+.lbl{display:block;font:600 11px/1 var(--body);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.chips{display:flex;flex-wrap:wrap;gap:7px}
+.chip{--c:var(--fg);font:600 13px/1 var(--body);color:var(--fg);background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:999px;padding:9px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;transition:border-color .15s,background .15s}
+.chip:hover{border-color:color-mix(in srgb,var(--c) 60%,var(--line))}
+.chip .d{width:8px;height:8px;border-radius:50%;background:var(--c)}
+.chip[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 20%,transparent);border-color:var(--c);color:#fff}
+.age{display:flex;gap:10px;align-items:center}
+.age input{width:84px;font:600 16px var(--body);color:var(--fg);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;padding:10px 12px}
+.hint{font-size:12.5px;color:var(--muted);margin:0}
+.budget{display:grid;gap:8px}
+.budget output{font:800 26px/1 var(--display);color:var(--gold);font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--gold)}
+.toggles{display:grid;gap:8px;font-size:13.5px}
+.toggles label{display:flex;gap:9px;align-items:center;cursor:pointer}
+.toggles input{accent-color:var(--red);width:16px;height:16px}
+.note{font-size:13px;line-height:1.45;color:#FFD9A0;background:rgba(240,194,90,.09);border:1px solid rgba(240,194,90,.25);border-radius:12px;padding:10px 12px;margin:0}
+
+.results{display:grid;gap:24px;min-width:0}
+.panel{background:rgba(22,17,42,.82);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:22px;padding:22px;display:grid;gap:18px;min-width:0}
+.panel.main{position:relative;border:none;padding:24px}
+.panel.main::before{content:"";position:absolute;inset:0;border-radius:22px;padding:2px;background:var(--glow);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.kicker{font:600 11px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;gap:8px;align-items:center}
+.kicker b{width:18px;height:2px;background:var(--glow)}
+h2{font:800 clamp(20px,2.4vw,26px)/1.15 var(--display);margin:0;text-wrap:balance}
+.sum{text-align:right}
+.sum .big{font:800 30px/1 var(--display);color:var(--gold);font-variant-numeric:tabular-nums}
+.sum .of{font-size:12.5px;color:var(--muted);margin-top:4px}
+.meter{height:6px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden}
+.meter i{display:block;height:100%;background:linear-gradient(90deg,var(--gold),var(--red));border-radius:99px;transition:width .3s}
+.meter.over i{background:linear-gradient(90deg,var(--red),var(--violet))}
+
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.item{position:relative;display:grid;grid-template-rows:auto 1fr auto;gap:8px;text-decoration:none;color:inherit;min-width:0}
+.thumb{position:relative;aspect-ratio:1;max-width:100%;border-radius:16px;background:var(--surface-2);overflow:hidden;display:grid;place-items:center;font:800 28px var(--display);color:var(--muted)}
+.thumb img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .35s}
+.item:hover .thumb img{transform:scale(1.05)}
+.badge{position:absolute;left:8px;top:8px;font:700 10px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;padding:5px 7px;border-radius:7px;background:rgba(13,10,22,.78);color:var(--fg);backdrop-filter:blur(4px)}
+.badge.add{background:var(--gold);color:var(--ink)}
+.nm{font-size:13px;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.item:hover .nm{color:#fff;text-decoration:underline;text-decoration-color:var(--line)}
+.pr{font:700 14px var(--body);color:var(--gold);font-variant-numeric:tabular-nums;white-space:nowrap}
+.rm{position:absolute;right:8px;top:8px;width:28px;height:28px;border-radius:50%;border:none;background:rgba(13,10,22,.8);color:var(--fg);cursor:pointer;font-size:16px;line-height:1}
+
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{font:700 14px/1 var(--body);border-radius:14px;padding:14px 18px;cursor:pointer;border:1px solid transparent;background:var(--red);color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:transform .12s,box-shadow .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px -8px var(--red)}
+.btn.ghost{background:transparent;border-color:var(--line);color:var(--fg)}
+.btn.ghost:hover{box-shadow:none;border-color:var(--muted)}
+.btn.small{padding:10px 13px;font-size:13px;border-radius:11px}
+.btn.gold{background:var(--gold);color:var(--ink)}
+.btn.gold:hover{box-shadow:0 8px 24px -8px var(--gold)}
+
+/* extras */
+.extras{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.ex{display:grid;grid-template-columns:56px minmax(0,1fr);gap:10px;align-items:center;background:rgba(255,255,255,.035);border:1px solid var(--line);border-radius:14px;padding:8px;min-width:0}
+.ex .thumb{border-radius:10px;font-size:16px}
+.ex .nm{font-size:12px;-webkit-line-clamp:2}
+.ex .bot{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:4px}
+.ex .plus{border:1px solid var(--gold);background:transparent;color:var(--gold);border-radius:9px;padding:6px 9px;font:700 12px/1 var(--body);cursor:pointer;white-space:nowrap}
+.ex[data-on="true"]{border-color:var(--gold);background:rgba(240,194,90,.08)}
+.ex[data-on="true"] .plus{background:var(--gold);color:var(--ink)}
+@media (max-width:520px){.extras{grid-template-columns:minmax(0,1fr)}}
+
+.single{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center}
+.single .thumb{width:150px}
+@media (max-width:480px){.single{grid-template-columns:110px minmax(0,1fr)}.single .thumb{width:110px}}
+.empty{color:var(--muted);margin:0}
+
+/* sticky order bar */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;padding:12px max(16px,env(safe-area-inset-right,0px)) calc(12px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));
+  background:rgba(13,10,22,.88);backdrop-filter:blur(14px);border-top:1px solid var(--line)}
+.bar-in{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:14px}
+.bar .t{display:grid;gap:2px;min-width:0}
+.bar .t b{font:800 22px/1 var(--display);color:var(--gold);font-variant-numeric:tabular-nums}
+.bar .t span{font-size:12.5px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* dialog */
+dialog{border:none;border-radius:22px;padding:0;max-height:calc(100dvh - 32px);overflow:auto;max-width:min(540px,calc(100vw - 32px));width:100%;background:var(--surface);color:var(--fg);box-shadow:0 30px 80px -20px #000}
+dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
+.dlg{padding:24px;display:grid;gap:14px}
+.dlg h3{font:800 22px/1.2 var(--display);margin:0}
+.dlg ul{margin:0;padding-left:18px;font-size:14px;display:grid;gap:3px}
+.dlg input{width:100%;font:500 15px var(--body);color:var(--fg);background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:12px;padding:11px 13px}
+.conf{border:1px dashed var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;background:rgba(0,0,0,.2)}
+.conf .num{font:800 20px var(--display);color:var(--gold)}
+.err{color:#FF8A98;font-size:13px;margin:0}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.steps li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:12px}
+.steps li>b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--display);background:var(--surface-2);color:var(--fg);border:1px solid var(--line)}
+.steps li.done>b{background:var(--gold);color:var(--ink);border-color:var(--gold)}
+.steps li div{display:grid;gap:6px;justify-items:start;min-width:0}
+.steps li span{font-size:13.5px;color:var(--muted)}
+.ordertext{white-space:pre-wrap;overflow-wrap:anywhere;margin:0;max-height:180px;overflow:auto;background:rgba(0,0,0,.25);border:1px dashed var(--line);border-radius:12px;padding:12px;font:12.5px/1.5 ui-monospace,Menlo,Consolas,monospace;color:var(--fg)}
+</style>
+
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="wrap">
+  <div class="top">
+    <a class="logo" href="https://geekshopukraine.com.ua/ua/" target="_blank" rel="noopener"><i>✦</i>GEEKSHOP UKRAINE</a>
+    <span class="proto" id="updated">Завантажуємо каталог…</span>
+  </div>
+
+  <section class="hero">
+    <div>
+      <p class="eyebrow" id="eyebrow">Підбір подарунка</p>
+      <h1>Подарунок для <span class="hl">будь-якого фаната</span></h1>
+      <p class="lead">Напишіть, для кого шукаєте, як написали б другу. Ми зберемо набір у тематичному пакуванні під ваш бюджет, покажемо готові бокси й одну річ на випадок, якщо хочеться простіше.</p>
+    </div>
+    <form class="letter" id="letter" autocomplete="off"><div class="letter-in">
+      <label for="free">Кому шукаємо подарунок?</label>
+      <textarea id="free" placeholder="Наприклад: дівчинка 5 років, любить Гаррі Поттера і свічки, бюджет до 1000 грн">дівчинка 5 років, любить Гаррі Поттера, любить свічки, бюджет до 1000 грн</textarea>
+      <div class="row"><button type="submit" class="btn gold">Підібрати подарунок ✦</button></div>
+      <div class="parsed" id="parsed" aria-live="polite"></div>
+    </div></form>
+  </section>
+
+  <div class="ticker" aria-hidden="true"><div class="track" id="track"></div></div>
+
+  <div class="bench">
+    <aside class="filters" aria-label="Критерії">
+      <div><span class="lbl">Кому</span><div class="chips" id="gender"></div></div>
+      <div><label class="lbl" for="age">Вік</label>
+        <div class="age"><input type="number" id="age" min="1" max="99" placeholder="—" inputmode="numeric"><span class="hint">років · порожнє, якщо не важливо</span></div></div>
+      <div><span class="lbl">Всесвіт</span><div class="chips" id="uni"></div></div>
+      <div><span class="lbl">Що любить</span><div class="chips" id="int"></div></div>
+      <div class="budget"><label class="lbl" for="budget" style="margin:0">Бюджет</label><output id="bout">1000 ₴</output>
+        <input type="range" id="budget" min="150" max="4000" step="50" value="1000"></div>
+      <div class="toggles">
+        <label><input type="checkbox" id="optPack" checked> Тематичне пакування</label>
+        <label><input type="checkbox" id="optCard" checked> Листівка в набір</label>
+      </div>
+      <div id="notes" style="display:grid;gap:8px"></div>
+    </aside>
+    <main class="results" id="results" aria-live="polite"></main>
+  </div>
+</div>
+
+<div class="bar" id="bar"><div class="bar-in">
+  <div class="t"><b id="barTotal">0 ₴</b><span id="barInfo"></span></div>
+  <button class="btn" type="button" id="barOrder">Оформити набір</button>
+</div></div>
+
+<dialog id="dlg">
+  <form class="dlg" id="orderForm" novalidate>
+    <h3>Оформити набір</h3>
+    <ul id="dlgList"></ul>
+    <p class="hint" id="dlgTotal"></p>
+    <div><label class="lbl" for="oName">Ім'я та прізвище одержувача</label><input type="text" id="oName" autocomplete="name"></div>
+    <div><label class="lbl" for="oPhone">Телефон одержувача</label><input type="tel" id="oPhone" placeholder="+380" autocomplete="tel"></div>
+    <div><label class="lbl" for="oNp">Місто і відділення Нової пошти</label><input type="text" id="oNp" placeholder="Київ, відділення №25"></div>
+    <div><label class="lbl" for="oNote">Побажання (необов'язково)</label><input type="text" id="oNote" placeholder="Напис на листівці, колір стрічки…"></div>
+    <p class="err" id="oErr" hidden></p>
+    <div class="actions"><button type="submit" class="btn" id="oSend">Надіслати заявку</button><button type="button" class="btn ghost" id="oCancel">Скасувати</button></div>
+  </form>
+  <div class="dlg" id="confirm" hidden>
+    <h3 id="cTitle">Майже готово ✦</h3>
+    <p class="hint" style="font-size:14px">Заявку збережено. Щоб ми почали збирати набір, надішліть її нам в Instagram. Це займе хвилину.</p>
+    <ol class="steps">
+      <li class="done"><b>1</b><div><strong>Заявку скопійовано</strong><span id="cCopied">Текст уже в буфері обміну.</span><button type="button" class="btn small ghost" id="cCopy">Скопіювати ще раз</button></div></li>
+      <li><b>2</b><div><strong>Відкрийте наш Instagram</strong><span>@geekshop_ukraine → Direct</span><a class="btn small" href="https://ig.me/m/geekshop_ukraine" target="_blank" rel="noopener">Відкрити Direct</a></div></li>
+      <li><b>3</b><div><strong>Вставте і надішліть</strong><span>Утримайте поле повідомлення → «Вставити» (на комп'ютері Ctrl+V). Менеджер підтвердить замовлення і надішле реквізити для оплати.</span></div></li>
+    </ol>
+    <pre class="ordertext" id="cText"></pre>
+    <p class="note" id="cProto" hidden>Заявку не вдалося зберегти автоматично. Просто надішліть цей текст нам в Instagram.</p>
+    <div class="actions"><button type="button" class="btn small ghost" id="cClose">Закрити</button></div>
+  </div>
+</dialog>
+
+<script>
+let CATALOG = [];
+const CATALOG_FALLBACK = 'catalog-fallback.json';
+
+const UNIVERSES = [
+  ['hp','Гаррі Поттер','#F0C25A'],['marvel','Marvel','#EC3D52'],['dc','DC','#6FA8FF'],['starwars','Зоряні війни','#F5E27A'],
+  ['anime','Аніме','#55D6EE'],['stalker','S.T.A.L.K.E.R.','#BEDC4E'],['squid','Гра в кальмара','#FF5FA2'],['rick','Рік і Морті','#8BE04E'],
+  ['got','Гра престолів','#C9C2B0'],['homealone','Один вдома','#E86A4A'],['parents','Для мами й тата','#C79BFF']
+];
+const ANIME = ['aot','jjk'];
+const INTERESTS = [
+  ['cozy','Затишок і свічки'],['sweets','Солодощі'],['jewelry','Прикраси'],['wear','Одяг і шарфи'],
+  ['cosplay','Костюми'],['magic','Чарівні палички'],['collect','Фігурки й іграшки'],['creative','Стікери й творчість'],
+  ['books','Книги й навчання'],['home','Декор і чашки']
+];
+const TYPE_INTERESTS = {
+  candle:['cozy','home'], musicbox:['cozy','home','collect'], mug:['home','cozy'], poster:['home'],
+  jewelry:['jewelry'], keychain:['jewelry','collect'], apparel:['wear'], socks:['wear'], costume:['cosplay','wear','magic'],
+  sweets:['sweets'], drink:['sweets','magic'], wand:['magic','cosplay','collect'], props:['magic','books'],
+  figure:['collect'], stickers:['creative'], stationery:['books','creative'], card:[], box:[], pack:[]
+};
+const TYPE_LABEL = {candle:'Свічка',musicbox:'Скринька',mug:'Чашка',poster:'Постер',jewelry:'Прикраса',keychain:'Брелок',
+  apparel:'Аксесуар',socks:'Шкарпетки',costume:'Костюм',sweets:'Солодощі',drink:'Еліксир',wand:'Паличка',props:'Магічне',
+  figure:'Фігурка',stickers:'Стікери',stationery:'Канцелярія',card:'Листівка',box:'Бокс',pack:'Пакування'};
+const GENDERS = [['f','Для неї','#FF8FB8'],['m','Для нього','#6FA8FF'],['any','Не важливо','#A79DC9']];
+const EXTRA_MAX = 100;
+
+let byId = {};
+function prepareCatalog(items){
+  CATALOG = items.filter(p=>p && p.url && p.price>0);
+  CATALOG.forEach(p=>{
+    p.age = Number(p.age)||0;
+    p.ints = (TYPE_INTERESTS[p.type]||[]).slice();
+    if (/в'язана/i.test(p.name)) p.ints.push('cozy');
+    p.uni = ANIME.includes(p.universe) ? 'anime' : p.universe;
+  });
+  byId = Object.fromEntries(CATALOG.map(p=>[p.id,p]));
+}
+
+const S = {gender:'any', age:null, unis:new Set(), ints:new Set(), budget:1000, seed:1, extras:new Set(), removed:new Set()};
+const $ = id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- ticker ---------- */
+(function(){
+  const words=[['hp','Гаррі Поттер'],['mv','Marvel'],['st','S.T.A.L.K.E.R.'],['sw','Зоряні війни'],['an','Атака титанів'],['dc','Бетмен'],
+    ['rk','Рік і Морті'],['hp','Гоґвортс'],['mv','Дедпул'],['sq','Гра в кальмара'],['an','Магічна битва'],['dc','Супермен'],['st','Зона'],['hp','Фантастичні звірі']];
+  const one=words.map(([c,w])=>`<span class="f ${c}">${w}</span><span class="f dot">✦</span>`).join('');
+  $('track').innerHTML=one+one;
+})();
+
+/* ---------- controls ---------- */
+function chipRow(el, list, isOn, onTap){
+  el.innerHTML='';
+  list.forEach(([k,label,c])=>{
+    const b=document.createElement('button'); b.type='button'; b.className='chip';
+    if (c){ b.style.setProperty('--c',c); b.innerHTML=`<span class="d"></span>${esc(label)}`; } else b.textContent=label;
+    b.setAttribute('aria-pressed', isOn(k)); b.onclick=()=>{onTap(k); S.removed.clear(); render();}; el.appendChild(b);
+  });
+}
+function drawControls(){
+  chipRow($('gender'),GENDERS,k=>S.gender===k,k=>S.gender=k);
+  chipRow($('uni'),UNIVERSES,k=>S.unis.has(k),k=>S.unis.has(k)?S.unis.delete(k):S.unis.add(k));
+  chipRow($('int'),INTERESTS.map(([k,l])=>[k,l,'#9B7BFF']),k=>S.ints.has(k),k=>S.ints.has(k)?S.ints.delete(k):S.ints.add(k));
+  if (document.activeElement!==$('age')) $('age').value = S.age ?? '';
+  $('budget').value = S.budget; $('bout').textContent = S.budget+' ₴';
+}
+
+/* ---------- free-text parser ---------- */
+const UNI_WORDS = {hp:/гарр|поттер|potter|хогвартс|гогвортс|грифіндор|слизерин/i, marvel:/марвел|marvel|залізн|людин[аи][- ]павук|спайдер|локі|дедпул|deadpool|росомах|месник/i,
+  dc:/бетмен|бетмєн|batman|супермен|superman|харлі|\bdc\b/i, starwars:/зоряні війни|star wars|йод|дарт/i, anime:/аніме|anime|титан|jujutsu|магічна битва/i,
+  stalker:/сталкер|stalker/i, squid:/кальмар/i, rick:/рік і морті|рік та морті|rick/i, got:/престол/i, homealone:/один вдома|кевін/i, parents:/\bмам[аіиу]?\b|\bтат[оау]\b|бать|\bпапа\b/i};
+const INT_WORDS = {cozy:/свіч|свеч|затиш/i, sweets:/солод|шоколад|цукер|сладк|ласощ/i, jewelry:/прикрас|кулон|підвіс|украш|біжутер/i,
+  wear:/шарф|шапк|одяг|шкарпет|носк|носоч/i, cosplay:/костюм|косплей|манті/i, magic:/палич|чарів/i, collect:/фігурк|колекц|іграшк|игрушк/i,
+  creative:/малю|стікер|стикер|наліп|творч/i, books:/книг|чита|навчан|школ|блокнот/i, home:/декор|чашк|кружк/i};
+function parseFree(txt){
+  const t = ' '+txt.toLowerCase().replace(/ґ/g,'г')+' ';
+  const found=[];
+  const ageM = t.match(/(\d{1,2})\s*(-?\s*(рок|рік|річн|лет|год|р\.|р\b|y))/);
+  S.age=null; S.gender='any';
+  if (ageM){ S.age=+ageM[1]; found.push(S.age+' р.'); }
+  else if (/дитин|малюк|ребен/.test(t)) { S.age=6; found.push('дитина'); }
+  else if (/підліт|подрост/.test(t)) { S.age=14; found.push('підліток'); }
+  else if (/мам|тат|дружин|чолов|колег|бабус|дідус/.test(t)) { S.age=35; found.push('дорослий'); }
+  if (/дівчин|дочк|доньк|донечк|сестр|мам|дружин|подруг|жінк|бабус|онучк|вона|неї/.test(t)) {S.gender='f'; found.push('для неї');}
+  else if (/хлопч|хлопц|син|брат|тат|чолов|дідус|онук|він|нього|друг/.test(t)) {S.gender='m'; found.push('для нього');}
+  const bM = t.match(/(?:до|бюджет[а-я]*|в межах|максимум|не більше|около|близько)\s*(\d[\d\s]{1,6})/) || t.match(/(\d[\d\s]{2,6})\s*(?:грн|₴|гривень|гривні|uah)/);
+  if (bM){ const v=+bM[1].replace(/\s/g,''); if (v>=100){ S.budget=Math.min(4000,Math.max(150,Math.round(v/50)*50)); found.push('до '+v+' ₴'); } }
+  S.unis.clear(); for (const [k,re] of Object.entries(UNI_WORDS)) if (re.test(t)) {S.unis.add(k); found.push(UNIVERSES.find(u=>u[0]===k)[1]);}
+  S.ints.clear(); for (const [k,re] of Object.entries(INT_WORDS)) if (re.test(t)) {S.ints.add(k); found.push(INTERESTS.find(u=>u[0]===k)[1].toLowerCase());}
+  $('parsed').innerHTML = found.length ? found.map(f=>`<span>${esc(f)}</span>`).join('') : '<span class="miss">Не вдалося розпізнати — оберіть критерії нижче</span>';
+}
+
+/* ---------- picking ---------- */
+function rng(seed){ let s=seed*9301+49297; return ()=>((s=(s*9301+49297)%233280)/233280); }
+function ageOk(p){ return S.age==null || p.age<=S.age; }
+function genderOk(p){ return S.gender==='any' || p.gender==='any' || p.gender===S.gender; }
+function uniOk(p){
+  if (S.unis.size===0 || (S.unis.size===1 && S.unis.has('parents'))) return p.uni!=='parents' || S.age==null || S.age>=18;
+  return S.unis.has(p.uni);
+}
+function score(p){ let s=0; p.ints.forEach(i=>{ if(S.ints.has(i)) s+=3; }); if (S.gender!=='any' && p.gender===S.gender) s+=1; if (S.unis.has(p.uni)) s+=2; return s; }
+
+function compute(){
+  const R = rng(S.seed);
+  const base = CATALOG.filter(p=>uniOk(p)&&genderOk(p));
+  const ok = base.filter(ageOk).filter(p=>!S.removed.has(p.id));
+  const notes=[];
+  if (S.age!=null) S.ints.forEach(i=>{
+    const all=base.filter(p=>p.ints.includes(i)), allowed=all.filter(ageOk);
+    if (i==='cozy' && all.some(p=>p.type==='candle') && !allowed.some(p=>p.type==='candle')) notes.push(`Свічки рекомендуємо з 14 років. Замість них додали затишні речі: скриньку, чашку, в'язану іграшку.`);
+    else if (all.length && !allowed.length) notes.push(`«${INTERESTS.find(x=>x[0]===i)[1]}»: такі товари рекомендуємо з ${Math.min(...all.map(p=>p.age))} років, тож для ${S.age}-річних підібрали схожі за настроєм.`);
+  });
+
+  const boxes = ok.filter(p=>p.type==='box' && p.price<=S.budget).sort((a,b)=>(score(b)-score(a))||(b.price-a.price));
+
+  let left=S.budget; const set=[];
+  const usePack=$('optPack').checked, useCard=$('optCard').checked;
+  let pack=null, card=null;
+  if (usePack){
+    const packs=ok.filter(p=>p.type==='pack' && !/кулон|підвіс/i.test(p.name)).sort((a,b)=>a.price-b.price);
+    pack = packs.find(p=>S.unis.has(p.uni)) || CATALOG.find(p=>/Тематичне Пакування/.test(p.name));
+    if (pack && pack.price < left*0.4){ left-=pack.price; } else pack=null;
+  }
+  if (useCard) left-=45;
+  const pool = ok.filter(p=>!['box','pack','card'].includes(p.type) && p.price<=left)
+    .map(p=>({p, s:score(p)+R()*1.5})).sort((a,b)=>b.s-a.s);
+  const heroCands = pool.filter(x=>x.p.price>=left*0.3 && x.p.price<=left*0.75).sort((a,b)=>(b.s-a.s)||(b.p.price-a.p.price));
+  const hero = (heroCands[0]||pool[0]||{}).p;
+  const usedTypes=new Set();
+  if (hero){ set.push(hero); left-=hero.price; usedTypes.add(hero.type); pool.forEach(x=>{ if (x.p.uni===hero.uni) x.s+=2; }); pool.sort((a,b)=>b.s-a.s); }
+  for (const x of pool){
+    if (set.length>=4) break;
+    if (set.includes(x.p) || usedTypes.has(x.p.type) || x.p.price>left) continue;
+    if (x.p.price < 50 && left > 300) continue;
+    set.push(x.p); left-=x.p.price; usedTypes.add(x.p.type);
+  }
+  if (useCard){
+    left+=45;
+    const cards=ok.filter(p=>p.type==='card' && p.price<=Math.min(45,left)).sort(()=>R()-.5);
+    card = cards.find(p=>S.unis.has('parents') && p.uni==='parents') || cards.find(p=>hero && p.uni===hero.uni) || cards[0] || null;
+  }
+  const setItems=[...set]; if (card) setItems.push(card); if (pack) setItems.push(pack);
+
+  // small add-ons ≤100 ₴: 6 picks, max 2 per type, prefer the set's universe
+  const inSet=new Set(setItems.map(p=>p.id));
+  const mainUni = hero ? hero.uni : null;
+  const exPool = ok.filter(p=>p.price<=EXTRA_MAX && !['pack','box'].includes(p.type) && !inSet.has(p.id))
+    .map(p=>({p, s:score(p)+(p.uni===mainUni?3:0)+R()*2.5})).sort((a,b)=>b.s-a.s);
+  const extras=[]; const perType={};
+  S.extras.forEach(id=>{ const p=byId[id]; if (p && !inSet.has(id)) { extras.push(p); perType[p.type]=(perType[p.type]||0)+1; } });
+  for (const x of exPool){
+    if (extras.length>=6) break;
+    if (extras.includes(x.p) || (perType[x.p.type]||0)>=2) continue;
+    extras.push(x.p); perType[x.p.type]=(perType[x.p.type]||0)+1;
+  }
+
+  const singles = ok.filter(p=>!['pack','card','box'].includes(p.type) && p.price<=S.budget && p.price>=Math.min(S.budget*0.35,600))
+    .map(p=>({p,s:score(p)*100+p.price/10+R()*20})).sort((a,b)=>b.s-a.s);
+  let single = (singles[0]||{}).p;
+  if (!single) single = ok.filter(p=>!['pack','card','box'].includes(p.type) && p.price<=S.budget).sort((a,b)=>(score(b)-score(a))||(b.price-a.price))[0];
+
+  return {boxes, setItems, extras, single, notes};
+}
+
+/* ---------- rendering ---------- */
+const thumb=(p,badge)=>`<div class="thumb">${p.thumb?`<img src="${p.thumb}" alt="" loading="lazy">`:esc(p.name[0])}${badge||''}</div>`;
+const itemHTML=(p,opts={})=>`<div class="item"><a href="${esc(p.url)}" target="_blank" rel="noopener" style="display:contents;color:inherit;text-decoration:none">${thumb(p,`<span class="badge${opts.added?' add':''}">${opts.added?'+ додано':TYPE_LABEL[p.type]||''}</span>`)}<span class="nm">${esc(p.name)}</span></a><span class="pr">${p.price} ₴</span>${opts.removable?`<button class="rm" type="button" data-rm="${esc(p.id)}" aria-label="Прибрати з набору">×</button>`:''}</div>`;
+let order=[];
+
+function render(){
+  drawControls();
+  const {boxes,setItems,extras,single,notes}=compute();
+  $('notes').innerHTML = notes.map(n=>`<p class="note">${esc(n)}</p>`).join('');
+  const added = extras.filter(p=>S.extras.has(p.id));
+  order=[...setItems, ...added];
+  const base=setItems.reduce((a,p)=>a+p.price,0), add=added.reduce((a,p)=>a+p.price,0), total=base+add;
+  const pct=Math.min(100,Math.round(total/S.budget*100));
+  let h='';
+
+  h+=`<section class="panel main"><div class="head"><div><div class="kicker"><b></b>Зібраний набір</div><h2>Набір під ваш запит</h2></div>
+      <div class="sum"><div class="big">${total} ₴</div><div class="of">з бюджету ${S.budget} ₴${add?` · дрібниці +${add} ₴`:''}</div></div></div>
+      <div class="meter${total>S.budget?' over':''}"><i style="width:${pct}%"></i></div>`;
+  h+= setItems.length ? `<div class="items">${setItems.map(p=>itemHTML(p,{removable:true})).join('')}${added.map(p=>itemHTML(p,{added:true})).join('')}</div>
+      <div class="actions"><button class="btn" id="orderSet" type="button">Оформити цей набір</button><button class="btn ghost" id="reroll" type="button">↻ Інший варіант</button></div>`
+      : `<p class="empty">Під ці критерії не вистачає товарів. Спробуйте збільшити бюджет або прибрати частину фільтрів.</p>`;
+  h+=`</section>`;
+
+  if (extras.length){
+    h+=`<section class="panel"><div class="head"><div><div class="kicker"><b></b>До ${EXTRA_MAX} ₴ за штуку</div><h2>Додайте дрібниць до набору</h2></div></div>
+      <div class="extras">${extras.map(p=>{const on=S.extras.has(p.id);return `<div class="ex" data-on="${on}">${thumb(p)}<div style="min-width:0"><a class="nm" href="${esc(p.url)}" target="_blank" rel="noopener" style="text-decoration:none">${esc(p.name)}</a>
+        <div class="bot"><span class="pr">${p.price} ₴</span><button class="plus" type="button" data-ex="${esc(p.id)}" aria-pressed="${on}">${on?'✓ У наборі':'+ Додати'}</button></div></div></div>`}).join('')}</div></section>`;
+  }
+
+  h+=`<section class="panel"><div class="head"><div><div class="kicker"><b></b>Готовий бокс</div><h2>Зібрано нашими руками</h2></div></div>`;
+  h+= boxes.length ? `<div class="items">${boxes.slice(0,4).map(p=>itemHTML(p)).join('')}</div>` :
+      `<p class="empty">Готових боксів у межах ${S.budget} ₴${S.age!=null?` для ${S.age} років`:''} зараз немає. Зібраний набір вище його замінить.</p>`;
+  h+=`</section>`;
+
+  h+=`<section class="panel"><div class="head"><div><div class="kicker"><b></b>Один подарунок</div><h2>Якщо хочеться одну річ</h2></div></div>`;
+  h+= single ? `<div class="single">${thumb(single,`<span class="badge">${TYPE_LABEL[single.type]||''}</span>`)}<div style="display:grid;gap:10px;min-width:0"><strong style="font:600 16px/1.35 var(--body);overflow-wrap:anywhere">${esc(single.name)}</strong><span class="sum"><span class="big" style="font-size:24px">${single.price} ₴</span></span><div class="actions"><a class="btn small" href="${esc(single.url)}" target="_blank" rel="noopener">Купити на сайті →</a></div></div></div>`
+      : `<p class="empty">Нічого не знайшли під ці критерії.</p>`;
+  h+=`</section>`;
+  $('results').innerHTML=h;
+
+  $('barTotal').textContent=total+' ₴';
+  $('barInfo').textContent=`${order.length} ${order.length===1?'товар':order.length<5?'товари':'товарів'} · бюджет ${S.budget} ₴`;
+  $('barOrder').disabled=!order.length;
+
+  const r=$('reroll'); if(r) r.onclick=()=>{S.seed++; render();};
+  const o=$('orderSet'); if(o) o.onclick=openOrder;
+  document.querySelectorAll('[data-ex]').forEach(b=>b.onclick=()=>{const id=b.dataset.ex; S.extras.has(id)?S.extras.delete(id):S.extras.add(id); render();});
+  document.querySelectorAll('[data-rm]').forEach(b=>b.onclick=()=>{S.removed.add(b.dataset.rm); render();});
+}
+
+/* ---------- starfield ---------- */
+(function(){
+  const c=$('sky'), x=c.getContext('2d'); const cols=['#F0C25A','#EC3D52','#9B7BFF','#55D6EE','#BEDC4E','#ffffff','#ffffff','#ffffff'];
+  let st=[], w, h, dpr;
+  function size(){ dpr=Math.min(2,devicePixelRatio||1); w=c.width=innerWidth*dpr; h=c.height=innerHeight*dpr;
+    st=Array.from({length:Math.round(innerWidth*innerHeight/7000)},()=>({x:Math.random()*w,y:Math.random()*h,r:(Math.random()*1.3+.3)*dpr,c:cols[Math.floor(Math.random()*cols.length)],p:Math.random()*6.28,s:.4+Math.random()}));}
+  function draw(t){ x.clearRect(0,0,w,h);
+    const g=x.createRadialGradient(w*.8,h*.05,0,w*.8,h*.05,w*.6); g.addColorStop(0,'rgba(155,123,255,.16)'); g.addColorStop(1,'rgba(155,123,255,0)'); x.fillStyle=g; x.fillRect(0,0,w,h);
+    const g2=x.createRadialGradient(w*.05,h*.9,0,w*.05,h*.9,w*.5); g2.addColorStop(0,'rgba(236,61,82,.10)'); g2.addColorStop(1,'rgba(236,61,82,0)'); x.fillStyle=g2; x.fillRect(0,0,w,h);
+    st.forEach(s=>{ x.globalAlpha=.35+.45*Math.sin(s.p+t/1000*s.s)**2; x.fillStyle=s.c; x.beginPath(); x.arc(s.x,s.y,s.r,0,6.28); x.fill(); }); x.globalAlpha=1; }
+  size(); addEventListener('resize',()=>{size(); draw(0);});
+  const still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (still) draw(0); else (function loop(t){ draw(t); requestAnimationFrame(loop); })(0);
+})();
+
+/* ---------- order dialog ---------- */
+// Посилання вебзастосунку Apps Script (…/exec). Порожнє = прототип без запису в таблицю.
+const ORDER_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwkenQJLP0UUiIGUMjXPc6PyBBk2c8R3QtVL6svFoNDWic1UHe5sTyJ-8IqtB0rpp5a/exec';
+const sumOf=a=>a.reduce((s,p)=>s+p.price,0);
+let orderNo='';
+function newOrderNo(){ const d=new Date(), z=n=>String(n).padStart(2,'0');
+  return `GS-${z(d.getDate())}${z(d.getMonth()+1)}${String(d.getFullYear()).slice(2)}-${Math.floor(100+Math.random()*900)}`; }
+function contact(){ return {name:$('oName').value.trim(), phone:$('oPhone').value.trim(), np:$('oNp').value.trim(), note:$('oNote').value.trim()}; }
+function orderText(){
+  const c=contact();
+  return [`Заявка ${orderNo}`,'ОДЕРЖУВАЧ',`Ім'я: ${c.name}`,`Телефон: ${c.phone}`,`Нова пошта: ${c.np}`]
+    .concat(c.note?[`Побажання: ${c.note}`]:[])
+    .concat(['','СКЛАД НАБОРУ'], order.map(p=>`• ${p.name} — ${p.price} ₴\n  ${p.url}`), ['',`Разом: ${sumOf(order)} ₴ (без доставки)`]).join('\n');
+}
+function validate(){
+  const c=contact();
+  if(!c.name||!c.phone||!c.np) return 'Заповніть ім\'я, телефон і відділення, щоб ми могли надіслати набір.';
+  if(c.phone.replace(/\D/g,'').length<10) return 'Перевірте номер телефону: потрібно щонайменше 10 цифр.';
+  return '';
+}
+function b64(str){ const bytes=new TextEncoder().encode(str); let bin=''; bytes.forEach(x=>bin+=String.fromCharCode(x)); return btoa(bin); }
+function syncLink(){
+  if(!ORDER_ENDPOINT) return;
+  const c=contact();
+  const payload={n:orderNo, ...c, req:$('free').value.trim().slice(0,400), items:order.map(p=>({c:p.code, nm:p.name, p:p.price, q:1}))};
+  $('oSend').dataset.href=ORDER_ENDPOINT+'?d='+encodeURIComponent(b64(JSON.stringify(payload)));
+}
+function openOrder(){
+  if (!order.length) return;
+  orderNo=newOrderNo();
+  $('orderForm').hidden=false; $('confirm').hidden=true; $('oErr').hidden=true;
+  $('dlgList').innerHTML=order.map(p=>`<li>${esc(p.name)} — ${p.price} ₴</li>`).join('');
+  $('dlgTotal').textContent=`Заявка ${orderNo} · разом ${sumOf(order)} ₴ без доставки`;
+  syncLink();
+  $('dlg').showModal();
+}
+async function copyOrder(btn){
+  const txt=orderText();
+  try{ await navigator.clipboard.writeText(txt); return true; }
+  catch{ const r=document.createRange(); r.selectNodeContents($('cText')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); return false; }
+}
+['oName','oPhone','oNp','oNote'].forEach(id=>$(id).addEventListener('input',()=>{ $('oErr').hidden=true; syncLink(); }));
+$('orderForm').addEventListener('submit',e=>{
+  e.preventDefault();
+  const err=validate();
+  if(err){ $('oErr').textContent=err; $('oErr').hidden=false; return; }
+  syncLink();
+  $('cProto').hidden=true;
+  fetch($('oSend').dataset.href,{mode:'no-cors'}).catch(()=>{ $('cProto').hidden=false; });
+  $('cText').textContent=orderText();
+  $('cTitle').textContent=`Заявка ${orderNo}: залишився один крок`;
+  $('orderForm').hidden=true; $('confirm').hidden=false; $('dlg').scrollTop=0;
+  copyOrder().then(ok=>{ $('cCopied').textContent= ok ? 'Текст уже в буфері обміну.' : 'Текст виділено нижче: скопіюйте його (Ctrl+C або «Копіювати»).'; });
+});
+$('oCancel').onclick=()=>$('dlg').close();
+$('cClose').onclick=()=>$('dlg').close();
+$('cCopy').onclick=async(e)=>{ const ok=await copyOrder(); e.target.textContent= ok?'✓ Скопійовано':'Виділено, скопіюйте'; };
+
+/* ---------- wiring ---------- */
+$('letter').addEventListener('submit',e=>{ e.preventDefault(); parseFree($('free').value); S.seed=1; S.extras.clear(); S.removed.clear(); render(); $('results').scrollIntoView({behavior:'smooth',block:'start'}); });
+$('age').addEventListener('input',e=>{ S.age = e.target.value===''?null:+e.target.value; render(); });
+$('budget').addEventListener('input',e=>{ S.budget=+e.target.value; render(); });
+$('optPack').addEventListener('change',render); $('optCard').addEventListener('change',render);
+$('barOrder').onclick=openOrder;
+async function loadCatalog(){
+  const withTimeout=(p,ms)=>Promise.race([p,new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),ms))]);
+  try{
+    const r=await withTimeout(fetch(ORDER_ENDPOINT+'?catalog=1'),15000);
+    const j=await r.json();
+    if(!j.items||j.items.length<20) throw new Error('empty');
+    return j;
+  }catch(err){
+    const r=await fetch(CATALOG_FALLBACK); return await r.json();
+  }
+}
+function countWord(n){ const a=n%10,b=n%100; return (a===1&&b!==11)?'товар':(a>=2&&a<=4&&(b<10||b>=20))?'товари':'товарів'; }
+$('results').innerHTML='<section class="panel"><p class="empty">Завантажуємо каталог…</p></section>';
+loadCatalog().then(j=>{
+  prepareCatalog(j.items||[]);
+  $('updated').textContent = j.updated ? 'Каталог оновлено '+j.updated : 'Каталог';
+  $('eyebrow').textContent = `Підбір подарунка · ${CATALOG.length} ${countWord(CATALOG.length)} у наявності`;
+  parseFree($('free').value); render();
+}).catch(()=>{
+  $('results').innerHTML='<section class="panel"><p class="empty">Не вдалося завантажити каталог. Оновіть сторінку або напишіть нам в Instagram @geekshop_ukraine.</p></section>';
+});
+</script>
+
+</body>
+</html>
