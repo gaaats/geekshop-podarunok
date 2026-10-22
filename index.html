@@ -165,6 +165,22 @@ dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
 .conf{border:1px dashed var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;background:rgba(0,0,0,.2)}
 .conf .num{font:800 20px var(--display);color:var(--gold)}
 .err{color:#FF8A98;font-size:13px;margin:0}
+.topr{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+.navlink{font:600 13px/1 var(--body);color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
+.navlink:hover{border-color:var(--gold);color:var(--gold)}
+.info{margin-top:40px;padding-top:28px;border-top:1px solid var(--line);display:grid;gap:18px;scroll-margin-top:20px}
+.info-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.info-card{background:rgba(22,17,42,.82);border:1px solid var(--line);border-radius:18px;padding:20px;display:grid;gap:12px;align-content:start;min-width:0}
+.info-card h3{font:800 16px/1.2 var(--display);margin:0}
+.info-card p{margin:0;color:var(--muted);font-size:14px}
+.info-card dl{margin:0;display:grid;gap:4px}
+.info-card dt{font-weight:700;font-size:14px;margin-top:6px}
+.info-card dd{margin:0;color:var(--muted);font-size:14px}
+.info-card ul{margin:0;padding-left:18px;display:grid;gap:6px;color:var(--muted);font-size:14px}
+.info-card li b{color:var(--fg)}
+.info-note{color:var(--gold)!important}
+.sel{user-select:all;color:var(--fg)}
+.info .hint a,.dlg .hint a{color:var(--gold)}
 .steps{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .steps li{display:grid;grid-template-columns:34px minmax(0,1fr);gap:12px;align-items:start;background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:12px}
 .steps li>b{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font:800 15px var(--display);background:var(--surface-2);color:var(--fg);border:1px solid var(--line)}
@@ -180,7 +196,7 @@ dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
 <div class="wrap">
   <div class="top">
     <a class="logo" href="https://geekshopukraine.com.ua/ua/" target="_blank" rel="noopener"><i>✦</i>GEEKSHOP UKRAINE</a>
-    <span class="proto" id="updated">Завантажуємо каталог…</span>
+    <div class="topr"><a class="navlink" href="#delivery">Доставка й оплата</a><span class="proto" id="updated">Завантажуємо каталог…</span></div>
   </div>
 
   <section class="hero">
@@ -216,6 +232,41 @@ dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
     </aside>
     <main class="results" id="results" aria-live="polite"></main>
   </div>
+
+  <section class="info" id="delivery" aria-labelledby="delivery-h">
+    <div class="kicker"><b></b>Умови</div>
+    <h2 id="delivery-h">Доставка й оплата</h2>
+    <div class="info-grid">
+      <article class="info-card">
+        <h3>Доставка</h3>
+        <dl>
+          <dt>Нова Пошта</dt><dd>Відділення, поштомат або кур'єр. Передоплата 200 ₴ (решту сплачуєте при отриманні) або повна передоплата.</dd>
+          <dt>Магазини Rozetka</dt><dd>Лише за повною передоплатою.</dd>
+        </dl>
+        <p class="info-note">Відправляємо протягом 2–3 робочих днів.</p>
+      </article>
+      <article class="info-card">
+        <h3>Оплата</h3>
+        <ul>
+          <li><b>Пром-оплата</b> та RozetkaPay</li>
+          <li><b>Онлайн карткою</b> Visa / Mastercard (WayForPay)</li>
+          <li><b>Переказ на картку</b> або оплата за реквізитами, безготівковий розрахунок</li>
+          <li><b>Післяплата</b>: лише після передоплати 200 ₴ на картку, решту доплачуєте при отриманні</li>
+        </ul>
+        <p class="info-note">Реквізити для оплати менеджер надішле в Direct після підтвердження заявки.</p>
+      </article>
+      <article class="info-card">
+        <h3>Гарантія й контакти</h3>
+        <p>Гарантія та повернення не поширюються на вироби з пошкодженнями, що виникли під час використання.</p>
+        <dl>
+          <dt>Telegram / Viber</dt><dd><span class="sel">+380 93 449 63 04</span></dd>
+          <dt>Пошта</dt><dd><span class="sel">info.geekshopukraine@gmail.com</span></dd>
+          <dt>Графік</dt><dd>Пн–Пт 10:00–19:00, Сб 10:00–15:00, Нд вихідний</dd>
+        </dl>
+      </article>
+    </div>
+    <p class="hint"><a href="https://geekshopukraine.com.ua/ua/delivery_info" target="_blank" rel="noopener">Повні умови на сайті магазину →</a></p>
+  </section>
 </div>
 
 <div class="bar" id="bar"><div class="bar-in">
@@ -228,6 +279,7 @@ dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
     <h3>Оформити набір</h3>
     <ul id="dlgList"></ul>
     <p class="hint" id="dlgTotal"></p>
+    <p class="hint">Нова Пошта або магазини Rozetka · передоплата 200 ₴ або повна · відправка за 2–3 робочі дні. <a href="#delivery" id="dlgDeliv">Умови доставки й оплати</a></p>
     <div><label class="lbl" for="oName">Ім'я та прізвище одержувача</label><input type="text" id="oName" autocomplete="name"></div>
     <div><label class="lbl" for="oPhone">Телефон одержувача</label><input type="tel" id="oPhone" placeholder="+380" autocomplete="tel"></div>
     <div><label class="lbl" for="oNp">Місто і відділення Нової пошти</label><input type="text" id="oNp" placeholder="Київ, відділення №25"></div>
@@ -534,6 +586,7 @@ $('orderForm').addEventListener('submit',e=>{
   copyOrder().then(ok=>{ $('cCopied').textContent= ok ? 'Текст уже в буфері обміну.' : 'Текст виділено нижче: скопіюйте його (Ctrl+C або «Копіювати»).'; });
 });
 $('oCancel').onclick=()=>$('dlg').close();
+$('dlgDeliv').onclick=()=>$('dlg').close();
 $('cClose').onclick=()=>$('dlg').close();
 $('cCopy').onclick=async(e)=>{ const ok=await copyOrder(); e.target.textContent= ok?'✓ Скопійовано':'Виділено, скопіюйте'; };
 
