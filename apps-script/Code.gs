@@ -55,7 +55,7 @@ function sanitize_(o) {
   })).filter(it => it.nm);
   if (!items.length) return null;
   const total = items.reduce((a, it) => a + it.p * it.q, 0);
-  return { n, name, phone, np, note: s(o.note, 500), req: s(o.req, 500), items, total };
+  return { n, name, phone, np, pay: s(o.pay, 80), note: s(o.note, 500), req: s(o.req, 500), items, total };
 }
 
 function append_(sh, o) {
@@ -63,7 +63,7 @@ function append_(sh, o) {
   const phone = o.phone.replace(/^\+/, '');
   const money = v => v.toFixed(2);
   const rows = o.items.map(it => [
-    o.n, date, o.name, '', phone, '', o.np, 'Нова Пошта', '', 'Нове', '', '',
+    o.n, date, o.name, '', phone, '', o.np, 'Нова Пошта', o.pay, 'Нове', '', '',
     it.c, it.nm, money(it.q), SOURCE, 'підбирач', '', '', '',
     money(o.total), money(it.p), money(o.total),
     o.note, o.req, ''
@@ -78,7 +78,7 @@ function page_(title, message, o) {
   const esc = v => String(v).replace(/[&<>"]/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[ch]));
   let text = '';
   if (o) {
-    text = ['Заявка ' + o.n, 'ОДЕРЖУВАЧ', "Ім'я: " + o.name, 'Телефон: ' + o.phone, 'Нова пошта: ' + o.np]
+    text = ['Заявка ' + o.n, 'ОДЕРЖУВАЧ', "Ім'я: " + o.name, 'Телефон: ' + o.phone, 'Нова пошта: ' + o.np].concat(o.pay ? ['Оплата: ' + o.pay] : [])
       .concat(o.note ? ['Побажання: ' + o.note] : [])
       .concat(['', 'СКЛАД НАБОРУ'])
       .concat(o.items.map(it => '• ' + it.nm + (it.q > 1 ? ' ×' + it.q : '') + ' — ' + it.p + ' ₴'))

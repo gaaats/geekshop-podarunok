@@ -165,6 +165,12 @@ dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
 .conf{border:1px dashed var(--line);border-radius:14px;padding:16px;display:grid;gap:8px;background:rgba(0,0,0,.2)}
 .conf .num{font:800 20px var(--display);color:var(--gold)}
 .err{color:#FF8A98;font-size:13px;margin:0}
+.pay{border:none;margin:0;padding:0;display:grid;gap:8px}
+.pay legend{padding:0}
+.pay label{display:grid;grid-template-columns:20px minmax(0,1fr);gap:10px;align-items:start;background:rgba(0,0,0,.22);border:1px solid var(--line);border-radius:12px;padding:11px 12px;cursor:pointer;font-size:14px;color:var(--muted)}
+.pay label b{color:var(--fg)}
+.pay input{accent-color:var(--gold);width:18px;height:18px;margin:1px 0 0}
+.pay label:has(input:checked){border-color:var(--gold);background:rgba(240,194,90,.08)}
 .topr{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
 .navlink{font:600 13px/1 var(--body);color:var(--fg);text-decoration:none;border-bottom:1px solid var(--line);padding-bottom:3px}
 .navlink:hover{border-color:var(--gold);color:var(--gold)}
@@ -248,8 +254,6 @@ dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
       <article class="info-card">
         <h3>Оплата</h3>
         <ul>
-          <li><b>Пром-оплата</b> та RozetkaPay</li>
-          <li><b>Онлайн карткою</b> Visa / Mastercard (WayForPay)</li>
           <li><b>Переказ на картку</b> або оплата за реквізитами, безготівковий розрахунок</li>
           <li><b>Післяплата</b>: лише після передоплати 200 ₴ на картку, решту доплачуєте при отриманні</li>
         </ul>
@@ -283,6 +287,12 @@ dialog::backdrop{background:rgba(5,3,10,.7);backdrop-filter:blur(3px)}
     <div><label class="lbl" for="oName">Ім'я та прізвище одержувача</label><input type="text" id="oName" autocomplete="name"></div>
     <div><label class="lbl" for="oPhone">Телефон одержувача</label><input type="tel" id="oPhone" placeholder="+380" autocomplete="tel"></div>
     <div><label class="lbl" for="oNp">Місто і відділення Нової пошти</label><input type="text" id="oNp" placeholder="Київ, відділення №25"></div>
+    <fieldset class="pay" id="oPay">
+      <legend class="lbl">Спосіб оплати</legend>
+      <label><input type="radio" name="pay" value="Переказ на картку"> <span><b>Переказ на картку</b></span></label>
+      <label><input type="radio" name="pay" value="Оплата за реквізитами (безготівковий розрахунок)"> <span><b>Оплата за реквізитами</b>, безготівковий розрахунок</span></label>
+      <label><input type="radio" name="pay" value="Післяплата (передоплата 200 ₴ на картку)"> <span><b>Післяплата</b>: передоплата 200 ₴ на картку, решту доплачуєте при отриманні</span></label>
+    </fieldset>
     <div><label class="lbl" for="oNote">Побажання (необов'язково)</label><input type="text" id="oNote" placeholder="Напис на листівці, колір стрічки…"></div>
     <p class="err" id="oErr" hidden></p>
     <div class="actions"><button type="submit" class="btn" id="oSend">Надіслати заявку</button><button type="button" class="btn ghost" id="oCancel">Скасувати</button></div>
@@ -538,10 +548,11 @@ const sumOf=a=>a.reduce((s,p)=>s+p.price,0);
 let orderNo='';
 function newOrderNo(){ const d=new Date(), z=n=>String(n).padStart(2,'0');
   return `GS-${z(d.getDate())}${z(d.getMonth()+1)}${String(d.getFullYear()).slice(2)}-${Math.floor(100+Math.random()*900)}`; }
-function contact(){ return {name:$('oName').value.trim(), phone:$('oPhone').value.trim(), np:$('oNp').value.trim(), note:$('oNote').value.trim()}; }
+function payChoice(){ const r=document.querySelector('input[name=pay]:checked'); return r?r.value:''; }
+function contact(){ return {name:$('oName').value.trim(), phone:$('oPhone').value.trim(), np:$('oNp').value.trim(), pay:payChoice(), note:$('oNote').value.trim()}; }
 function orderText(){
   const c=contact();
-  return [`Заявка ${orderNo}`,'ОДЕРЖУВАЧ',`Ім'я: ${c.name}`,`Телефон: ${c.phone}`,`Нова пошта: ${c.np}`]
+  return [`Заявка ${orderNo}`,'ОДЕРЖУВАЧ',`Ім'я: ${c.name}`,`Телефон: ${c.phone}`,`Нова пошта: ${c.np}`,`Оплата: ${c.pay}`]
     .concat(c.note?[`Побажання: ${c.note}`]:[])
     .concat(['','СКЛАД НАБОРУ'], order.map(p=>`• ${p.name} — ${p.price} ₴\n  ${p.url}`), ['',`Разом: ${sumOf(order)} ₴ (без доставки)`]).join('\n');
 }
@@ -549,6 +560,7 @@ function validate(){
   const c=contact();
   if(!c.name||!c.phone||!c.np) return 'Заповніть ім\'я, телефон і відділення, щоб ми могли надіслати набір.';
   if(c.phone.replace(/\D/g,'').length<10) return 'Перевірте номер телефону: потрібно щонайменше 10 цифр.';
+  if(!c.pay) return 'Оберіть спосіб оплати.';
   return '';
 }
 function b64(str){ const bytes=new TextEncoder().encode(str); let bin=''; bytes.forEach(x=>bin+=String.fromCharCode(x)); return btoa(bin); }
@@ -573,6 +585,7 @@ async function copyOrder(btn){
   catch{ const r=document.createRange(); r.selectNodeContents($('cText')); const s=getSelection(); s.removeAllRanges(); s.addRange(r); return false; }
 }
 ['oName','oPhone','oNp','oNote'].forEach(id=>$(id).addEventListener('input',()=>{ $('oErr').hidden=true; syncLink(); }));
+$('oPay').addEventListener('change',()=>{ $('oErr').hidden=true; syncLink(); });
 $('orderForm').addEventListener('submit',e=>{
   e.preventDefault();
   const err=validate();
