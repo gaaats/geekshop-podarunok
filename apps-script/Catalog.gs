@@ -22,7 +22,54 @@ function installTriggers() {
   refreshCatalog();
 }
 
+/* ---------- сповіщення ---------- */
+const NOTIFY_TO = 'mr.apemi@gmail.com';
+const TOKEN_EXPIRES = '2027-10-22';   // «Дійсний до» токена в кабінеті Prom
+const MIN_ITEMS = 50;                  // менше товарів = щось пішло не так
+
+function notify_(key, subject, body, everyHours) {
+  const props = PropertiesService.getScriptProperties();
+  const last = Number(props.getProperty('NOTIFY_' + key) || 0);
+  if (everyHours && Date.now() - last < everyHours * 3600e3) return;   // не спамити
+  MailApp.sendEmail(NOTIFY_TO, '[Підбирач Geekshop] ' + subject, body +
+    '\n\nТаблиця: ' + SpreadsheetApp.getActive().getUrl() +
+    '\nСкрипт: Розширення → Apps Script → Виконання (журнал помилок).');
+  props.setProperty('NOTIFY_' + key, String(Date.now()));
+}
+
+/** Запустіть вручну, щоб перевірити, що листи доходять. */
+function testNotify() {
+  notify_('TEST', 'Перевірка сповіщень', 'Це тестовий лист. Якщо він прийшов, сповіщення про помилки працюють.', 0);
+}
+
 function refreshCatalog() {
+  const props = PropertiesService.getScriptProperties();
+  try {
+    const count = refreshCatalogCore_();
+    if (props.getProperty('CATALOG_FAILING') === '1') {
+      notify_('RECOVERED', 'Каталог знову оновлюється', 'Оновлення каталогу з Prom знову працює. Товарів у підбирачі: ' + count + '.', 0);
+    }
+    props.setProperty('CATALOG_FAILING', '0');
+  } catch (err) {
+    props.setProperty('CATALOG_FAILING', '1');
+    let hint = '';
+    const msg = String(err && err.message || err);
+    if (/Prom API 401|Prom API 403/.test(msg)) hint = '\n\nСхоже, токен Prom недійсний або без прав «Продукти: Читання». Створіть новий токен у кабінеті Prom і вставте його у властивість PROM_TOKEN (Apps Script → Налаштування проекту).';
+    else if (/PROM_TOKEN/.test(msg)) hint = '\n\nУ властивостях скрипту немає PROM_TOKEN.';
+    else if (/Prom API 5|Timeout|timed out|Address unavailable/i.test(msg)) hint = '\n\nСхоже на тимчасовий збій Prom. Якщо наступне оновлення (через 12 годин) пройде, прийде лист «Каталог знову оновлюється».';
+    notify_('FAIL', 'Помилка оновлення каталогу', 'Не вдалося оновити каталог з Prom.\nПомилка: ' + msg + hint +
+      '\n\nПідбирач і далі працює зі старим каталогом.', 12);
+    console.error(err);
+    return;
+  }
+  // нагадування про токен за 14 днів до кінця дії
+  const daysLeft = Math.floor((new Date(TOKEN_EXPIRES) - new Date()) / 864e5);
+  if (daysLeft <= 14) {
+    notify_('TOKEN', 'Токен Prom скоро закінчиться', 'Токен «Хелпер подарунків» діє до ' + TOKEN_EXPIRES + ' (залишилось днів: ' + daysLeft + ').\nСтворіть новий токен у кабінеті Prom і замініть PROM_TOKEN у налаштуваннях Apps Script, а потім змініть дату TOKEN_EXPIRES у коді.', 72);
+  }
+}
+
+function refreshCatalogCore_() {
   const token = PropertiesService.getScriptProperties().getProperty('PROM_TOKEN');
   if (!token) throw new Error('Немає PROM_TOKEN у властивостях скрипту');
 
@@ -79,11 +126,18 @@ function refreshCatalog() {
       o.universe, o.type, o.age, o.gender, img, SHOP_URL + p.id + '-gift.html'].concat(m, [now]));
   });
 
+  const prev = Number(PropertiesService.getScriptProperties().getProperty('CATALOG_COUNT') || 0);
+  if (rows.length < MIN_ITEMS || (prev && rows.length < prev * 0.5)) {
+    throw new Error('Prom повернув підозріло мало товарів у наявності: ' + rows.length + ' (було ' + prev + '). Старий каталог залишено без змін.');
+  }
+
   sh.clearContents();
   sh.getRange(1, 1, 1, CAT_HEAD.length).setValues([CAT_HEAD]).setFontWeight('bold');
   sh.setFrozenRows(1);
   if (rows.length) sh.getRange(2, 1, rows.length, CAT_HEAD.length).setValues(rows);
   PropertiesService.getScriptProperties().setProperty('CATALOG_UPDATED', now);
+  PropertiesService.getScriptProperties().setProperty('CATALOG_COUNT', String(rows.length));
+  return rows.length;
 }
 
 /** JSON для підбирача */
