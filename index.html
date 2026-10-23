@@ -425,7 +425,11 @@ function compute(){
     else if (all.length && !allowed.length) notes.push(`«${INTERESTS.find(x=>x[0]===i)[1]}»: такі товари рекомендуємо з ${Math.min(...all.map(p=>p.age))} років, тож для ${S.age}-річних підібрали схожі за настроєм.`);
   });
 
-  const boxes = ok.filter(p=>p.type==='box' && p.price<=S.budget).sort((a,b)=>(score(b)-score(a))||(b.price-a.price));
+  // готові бокси: вік обмежуємо м'якше (бокс «від 6 років» можна запропонувати й 5-річній дитині, з позначкою)
+  const BOX_AGE_SLACK = 3;
+  const boxAgeOk = p => S.age==null || p.age <= S.age + BOX_AGE_SLACK;
+  const boxes = base.filter(p=>p.type==='box' && p.price<=S.budget && !S.removed.has(p.id) && boxAgeOk(p))
+    .sort((a,b)=>(score(b)-score(a)) || ((ageOk(b)?1:0)-(ageOk(a)?1:0)) || (b.price-a.price));
 
   let left=S.budget; const set=[];
   const usePack=$('optPack').checked, useCard=$('optCard').checked;
@@ -478,7 +482,7 @@ function compute(){
 
 /* ---------- rendering ---------- */
 const thumb=(p,badge)=>`<div class="thumb">${p.thumb?`<img src="${p.thumb}" alt="" loading="lazy">`:esc(p.name[0])}${badge||''}</div>`;
-const itemHTML=(p,opts={})=>`<div class="item"><a href="${esc(p.url)}" target="_blank" rel="noopener" style="display:contents;color:inherit;text-decoration:none">${thumb(p,`<span class="badge${opts.added?' add':''}">${opts.added?'+ додано':TYPE_LABEL[p.type]||''}</span>`)}<span class="nm">${esc(p.name)}</span></a><span class="pr">${p.price} ₴</span>${opts.removable?`<button class="rm" type="button" data-rm="${esc(p.id)}" aria-label="Прибрати з набору">×</button>`:''}</div>`;
+const itemHTML=(p,opts={})=>`<div class="item"><a href="${esc(p.url)}" target="_blank" rel="noopener" style="display:contents;color:inherit;text-decoration:none">${thumb(p,`<span class="badge${opts.added?' add':''}">${opts.added?'+ додано':(opts.badge||TYPE_LABEL[p.type]||'')}</span>`)}<span class="nm">${esc(p.name)}</span></a><span class="pr">${p.price} ₴</span>${opts.removable?`<button class="rm" type="button" data-rm="${esc(p.id)}" aria-label="Прибрати з набору">×</button>`:''}</div>`;
 let order=[];
 
 function render(){
@@ -506,7 +510,7 @@ function render(){
   }
 
   h+=`<section class="panel"><div class="head"><div><div class="kicker"><b></b>Готовий бокс</div><h2>Зібрано нашими руками</h2></div></div>`;
-  h+= boxes.length ? `<div class="items">${boxes.slice(0,4).map(p=>itemHTML(p)).join('')}</div>` :
+  h+= boxes.length ? `<div class="items">${boxes.slice(0,4).map(p=>itemHTML(p,{badge: (S.age!=null && p.age>S.age) ? `Бокс · від ${p.age} р.` : ''})).join('')}</div>` :
       `<p class="empty">Готових боксів у межах ${S.budget} ₴${S.age!=null?` для ${S.age} років`:''} зараз немає. Зібраний набір вище його замінить.</p>`;
   h+=`</section>`;
 
